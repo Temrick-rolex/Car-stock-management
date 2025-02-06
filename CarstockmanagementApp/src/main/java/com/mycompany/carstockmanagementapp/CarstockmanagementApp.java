@@ -3,7 +3,7 @@
  */
 
 package com.mycompany.carstockmanagementapp;
-
+import Views.Stock;
 /**
  *
  * @author DELL LATITUDE 5580
@@ -11,6 +11,7 @@ package com.mycompany.carstockmanagementapp;
 public class CarstockmanagementApp {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        Stock home = new Stock();
+        home.setVisible(true);
     }
 }
