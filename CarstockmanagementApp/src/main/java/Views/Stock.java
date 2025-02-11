@@ -57,7 +57,7 @@ public class Stock extends javax.swing.JFrame {
             while (Rslt.next()) {
                 Vector v2 = new Vector();
            
-                for (int ii = 1; ii <= CNT; ii++) {
+                for (int i = 1; i <= CNT; i++) {
                     v2.add(Rslt.getString("id"));
                     v2.add(Rslt.getString("detail"));
                     v2.add(Rslt.getString("qtyinstock"));
@@ -124,6 +124,11 @@ public class Stock extends javax.swing.JFrame {
                 "id", "detail", "qtyinstock", "chassisnb", "carstate", "status", "price"
             }
         ));
+        jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable2MouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable2);
 
         jLabel8.setText("detail");
@@ -153,10 +158,20 @@ public class Stock extends javax.swing.JFrame {
         jButton2.setBackground(new java.awt.Color(255, 153, 0));
         jButton2.setText("Update");
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setBackground(new java.awt.Color(255, 0, 51));
-        jButton3.setText("jButton3");
+        jButton3.setText("Delete");
         jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("price");
         jLabel1.setAlignmentY(0.9F);
@@ -179,8 +194,9 @@ public class Stock extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(86, 86, 86)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 212, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 136, Short.MAX_VALUE)
                         .addComponent(jButton3))
                     .addComponent(txtprice)
                     .addComponent(txtstatus)
@@ -293,6 +309,100 @@ public class Stock extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+         //update function
+            DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+            int selectedIndex = jTable2.getSelectedRow();
+            try {   
+            
+            int id = Integer.parseInt(model.getValueAt(selectedIndex, 0).toString());
+            String detail = txtdetail.getText();
+            String qtyinstock = txtqty.getText();
+            String chassisnb = txtchassis.getText();
+            String carstate = txtstate.getText();
+            String status = txtstatus.getText();
+            String price = txtprice.getText();
+            
+            
+            int qty = Integer.parseInt(qtyinstock);
+            int prc = Integer.parseInt(price);
+  
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/jkc_carshop","root","");
+            insert = conn.prepareStatement("update stock set detail= ?,qtyinstock= ?,chassisnb= ?,carstate= ?,status= ?,price= ? where id= ?");
+            insert.setString(1, detail);
+            insert.setInt(2, qty);
+            insert.setString(3, chassisnb);
+            insert.setString(4, carstate);
+            insert.setString(5, status);
+            insert.setInt(6, prc);
+            insert.executeUpdate();
+            JOptionPane.showMessageDialog(this, "informations updated");
+            txtdetail.setText("");
+            txtqty.setText("");
+            txtchassis.setText("");
+            txtstate.setText("");
+            txtstatus.setText("");
+            txtprice.setText("");
+            txtdetail.requestFocus();  
+            updatetab();
+           
+            
+        } catch (ClassNotFoundException ex) {
+           
+        } catch (SQLException ex) {
+
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+         // Delete function
+          DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+          int selectedIndex = jTable2.getSelectedRow();
+            try {   
+                
+            int id = Integer.parseInt(model.getValueAt(selectedIndex, 0).toString());
+            int dialogResult = JOptionPane.showConfirmDialog (null, "Do you want to Delete the selected information ?","Warning",JOptionPane.YES_NO_OPTION);
+            if(dialogResult == JOptionPane.YES_OPTION){
+
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/jkc_carshop","root","");
+            insert = conn.prepareStatement("delete from stock where id = ?");
+        
+            insert.setInt(1,id);
+            insert.executeUpdate();
+            JOptionPane.showMessageDialog(this, "information deleted successfully");
+            txtdetail.setText("");
+            txtqty.setText("");
+            txtchassis.setText("");
+            txtstate.setText("");
+            txtstatus.setText("");
+            txtprice.setText("");  
+            updatetab();
+           }
+        } catch (ClassNotFoundException ex) {   
+        } catch (SQLException ex) {     
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
+        // TODO add your handling code here:
+        DefaultTableModel DTM = (DefaultTableModel) jTable2.getModel();
+         int selectedRow =  jTable2.getSelectedRow();
+         
+            txtdetail.setText(DTM.getValueAt(selectedRow, 1).toString());
+            txtqty.setText(DTM.getValueAt(selectedRow, 2).toString());
+            txtchassis.setText(DTM.getValueAt(selectedRow, 3).toString());
+            txtstate.setText(DTM.getValueAt(selectedRow, 4).toString());
+            txtstatus.setText(DTM.getValueAt(selectedRow, 5).toString());
+            txtprice.setText(DTM.getValueAt(selectedRow, 6).toString()); 
+            
+    }//GEN-LAST:event_jTable2MouseClicked
+
+    
+    
     
                                      
 
